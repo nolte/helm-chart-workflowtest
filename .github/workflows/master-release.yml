@@ -63,3 +63,20 @@ jobs:
           asset_path: ./dist/${{ steps.chart_informations.outputs.CHARTNAME }}-${{ steps.chart_informations.outputs.CHARTVERSION }}.tgz
           asset_name: ${{ steps.chart_informations.outputs.CHARTNAME }}-${{ steps.chart_informations.outputs.CHARTVERSION }}.tgz
           asset_content_type: application/x-gzip
+  regintegrate:
+    name: reintegrate to develop
+    runs-on: ubuntu-latest
+    env:
+      GOARCH: amd64
+      GOOS: linux
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          ref: develop
+
+      - name: merge master release back
+        run: |
+          git merge master --no-commit --no-ff 
+          git push --all origin
