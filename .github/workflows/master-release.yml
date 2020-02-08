@@ -81,5 +81,9 @@ jobs:
       - name: merge master release back
         run: |
           export GIT_MERGE_AUTOEDIT=no
+          git fetch master
+          git fetch develop
+          git checkout master
+          git checkout develop
           git merge master --ff --no-commit
           git push --all origin
