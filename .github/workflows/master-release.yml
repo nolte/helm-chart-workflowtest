@@ -69,21 +69,31 @@ jobs:
     env:
       GOARCH: amd64
       GOOS: linux
+      GIT_MERGE_AUTOEDIT: no
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-        with:
-          ref: refs/heads/develop
+        #with:
+        #  ref: refs/heads/develop
       - name: configure git
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-      - name: merge master release back
-        run: |
-          export GIT_MERGE_AUTOEDIT=no
-          git fetch master
-          git fetch develop
-          git checkout master
-          git checkout develop
-          git merge master --ff --no-commit
-          git push --all origin
+     
+      - name: Run package
+        id: chart_informations
+        uses: nolte/github-action/utils/mergeFastForward@feature/shasum
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
+        with:
+          baseBranch: master
+          headBranch: develop
+     
+      #- name: merge master release back
+      #  run: |
+      #    git fetch refs/heads/master
+      #    git fetch refs/heads/develop
+      #    git checkout master
+      #    git checkout develop
+      #    git merge master --ff --no-commit
+      #    git push --all origin
