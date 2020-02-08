@@ -1,0 +1,92 @@
+name: Finished Release
+on:
+  milestone:
+    types: [closed]
+jobs:
+  build:
+    name: finish the release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: configure git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+      - name: Run package
+        id: chart_informations
+        uses: nolte/github-action/helm/set_facts@feature/shasum
+
+      - uses: actions/setup-python@v1
+      - name: set PY
+        run: echo "::set-env name=PY::$(python --version --version | sha256sum | cut -d' ' -f1)"
+
+      - name: set release version
+        uses: nolte/github-action/utils/bump2version@feature/shasum
+        with:
+          currentVersion: "${{ steps.chart_informations.outputs.CHARTVERSION }}"
+          part: release
+
+      - name: load relase chart informations
+        id: chart_informations_release
+        uses: nolte/github-action/helm/set_facts@feature/shasum
+
+      - name: Commit files
+        run: |
+          git commit -m "Update to Release Version ${{ steps.chart_informations_release.outputs.CHARTVERSION }} close Milestone ${{ github.event.milestone.title }}" -a
+          git checkout -b release/rc-${{ steps.chart_informations_release.outputs.CHARTVERSION }}
+          git checkout develop
+
+      #- name: pull-request
+      #  uses: repo-sync/pull-request@v2
+      #  with:
+      #    source_branch: "release/rc-${{ steps.chart_informations_release.outputs.CHARTVERSION }}"                     # If blank, default: triggered branch
+      #    destination_branch: "master"          # If blank, default: master
+      #    pr_title: "Pulling ${{ github.ref }} into master"
+      #    pr_body: ":crown: *An automated PR*"  # Full markdown support, requires pr_title to be set
+      #    pr_label: "auto-pr"                   # Comma-separated list (no spaces)
+      #    pr_milestone: "${{ github.event.milestone.title }}"           # Milestone name
+      #    github_token: ${{ secrets.GITHUB_TOKEN }}
+
+
+      - name: update to next develop version
+        uses: nolte/github-action/utils/bump2version@feature/shasum
+        with:
+          currentVersion: "${{ steps.chart_informations_release.outputs.CHARTVERSION }}"
+          part: minor
+
+      - name: load relase chart next develop version
+        id: chart_informations_next_dev
+        uses: nolte/github-action/helm/set_facts@feature/shasum
+
+      - name: Commit files
+        run: |
+          git commit -m "Update to next Develop Version ${{ steps.chart_informations_next_dev.outputs.CHARTVERSION }}" -a
+          git push --all origin
+
+
+      - name: debug
+        run: |
+          echo "${{ toJson(github.event) }}"
+
+      - name: Initialize Pull Request
+        uses: nolte/github-action/utils/pullrequest@feature/shasum
+        id: pull_request_release_master
+        with:
+          pull_request_token: ${{ secrets.GITHUB_TOKEN }}
+          head: release/rc-${{ steps.chart_informations_release.outputs.CHARTVERSION }}
+          base: master
+          title: 'Update master to Latest Release ${{ steps.chart_informations_release.outputs.CHARTVERSION }}'
+          mileStoneNumber: "${{ github.event.milestone.number }}"
+          labels: "automatic pr, release"
+          body: >
+            This Pull for update the Presentation Master Branch.
+
+      - name: Commit files
+        run: |
+          echo "${{ steps.pull_request_release_master.outputs.pull_request_number }}"
+      # https://github.com/actions/github-script
+      #- uses: actions/github-script@0.4.0
+      #  with:
+      #    github-token: ${{secrets.GITHUB_TOKEN}}
+      #    script: |

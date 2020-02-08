@@ -1,0 +1,56 @@
+name: Helm Chart CI
+on:
+  push:
+  pull_request:
+jobs:
+  helmbuild:
+    name: Package Chart
+    runs-on: ubuntu-latest
+    env:
+      GOARCH: amd64
+      GOOS: linux
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v1
+      - name: set PY
+        run: echo "::set-env name=PY::$(python --version --version | sha256sum | cut -d' ' -f1)"
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - uses: pre-commit/action@v1.0.1
+
+      - name: Run tests
+        uses: nolte/github-action/helm/testing@master
+        with:
+          path: "/github"
+
+#      - name: Run package
+#        uses: nolte/github-action/helm/build@master
+#
+#      - name: Echo the greeting's time
+#        run: sudo chmod 777 -R ./dist
+#
+#      - name: Run shasum
+#        uses: nolte/github-action/utils/sha256sum@feature/shasum
+#
+#      - name: Archive production artifacts
+#        uses: actions/upload-artifact@v1
+#        with:
+#          path: "dist"
+#          name: "dist"
+#
+#  deployChart:
+#    name: Publish Chart
+#    runs-on: ubuntu-latest
+#    needs: helmbuild
+#    #if: github.ref == 'refs/remotes/origin/develop'
+#    steps:
+#      - name: Echo the greeting's time
+#        run: echo "${{ github.ref }}"
