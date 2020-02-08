@@ -73,7 +73,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
         with:
-          ref: origin/develop
+          ref: refs/heads/develop
       - name: configure git
         run: |
           git config --local user.email "action@github.com"
