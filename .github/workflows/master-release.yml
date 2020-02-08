@@ -72,8 +72,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-        #with:
-        #  ref: refs/heads/develop
+        with:
+          ref: refs/heads/develop
       - name: configure git
         run: |
           git config --local user.email "action@github.com"
@@ -81,6 +81,5 @@ jobs:
       - name: merge master release back
         run: |
           export GIT_MERGE_AUTOEDIT=no
-          git checkout develop
           git merge master --ff --no-commit
           git push --all origin
