@@ -78,5 +78,5 @@ jobs:
 
       - name: merge master release back
         run: |
-          git merge master --no-commit --no-ff 
+          git merge master --ff 
           git push --all origin
