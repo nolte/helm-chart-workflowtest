@@ -73,7 +73,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
         with:
-          fetch-depth: 1
           ref: develop
       - name: configure git
         run: |
@@ -81,5 +80,5 @@ jobs:
           git config --local user.name "GitHub Action"
       - name: merge master release back
         run: |
-          git merge master --ff 
+          git merge master --ff --no-commit
           git push --all origin
