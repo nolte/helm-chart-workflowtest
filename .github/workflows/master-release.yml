@@ -1,0 +1,64 @@
+name: Create a Relase
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+      - master
+jobs:
+  helmbuild:
+    name: Package Chart
+    runs-on: ubuntu-latest
+    env:
+      GOARCH: amd64
+      GOOS: linux
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Run package
+        id: chart_informations
+        uses: nolte/github-action/helm/set_facts@feature/shasum
+
+      - name: Run package
+        uses: nolte/github-action/helm/build@master
+
+      - name: Echo the greeting's time
+        run: sudo chmod 777 -R ./dist
+
+      - name: Run shasum
+        id: checksum_files
+        uses: nolte/github-action/utils/sha256sum@feature/shasum
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{steps.chart_informations.outputs.CHARTVERSION }}
+          release_name: Release v${{ steps.chart_informations.outputs.CHARTVERSION }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.checksum_files.outputs.shaFilePath }}
+          asset_name: sha256sum.txt
+          asset_content_type: text/plain
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/${{ steps.chart_informations.outputs.CHARTNAME }}-${{ steps.chart_informations.outputs.CHARTVERSION }}.tgz
+          asset_name: ${{ steps.chart_informations.outputs.CHARTNAME }}-${{ steps.chart_informations.outputs.CHARTVERSION }}.tgz
+          asset_content_type: application/x-gzip
