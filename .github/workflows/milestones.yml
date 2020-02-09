@@ -88,7 +88,8 @@ jobs:
             args: "--trace"
             github-token: ${{ secrets.GITHUB_TOKEN }}
             number: ${{ steps.pull_request_release_master.outputs.pullRequestNumber }}
-            merge-method: rebase
+            #merge-method: rebase
+            merge-method: fast-forward
             filter-label: automerge
 
       - name: Commit files
