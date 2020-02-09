@@ -1,0 +1,16 @@
+name: TestCI
+on:
+  push:
+jobs:
+  test:
+    name: only a test
+    runs-on: ubuntu-latest
+    env:
+      GOARCH: amd64
+      GOOS: linux
+    steps:
+      - name: checkout the the chart Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          repository: 'nolte/helm-charts'
