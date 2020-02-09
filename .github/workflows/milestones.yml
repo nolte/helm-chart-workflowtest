@@ -153,8 +153,7 @@ jobs:
           release_name: Release v${{ steps.chart_informations.outputs.CHARTVERSION }}
           draft: false
           prerelease: true
-          body: |
-            ${{ steps.releasenodes.outputs.text }}
+          body: "fix text"
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1.0.1
