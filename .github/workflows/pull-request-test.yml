@@ -28,8 +28,15 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+
+            const milestones = github.issues.listMilestonesForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open"
+            })
             octokit.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              context.milestone.number,
+              issue_number: context.pull_request.number,
+              milestone: milestones[0].number
             })
