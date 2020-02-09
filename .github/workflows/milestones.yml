@@ -129,6 +129,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUTPUT_FOLDER: .dist/release_nodes
           #USE_MILESTONE_TITLE: "false"
+      - name: read file output
+        run: ls -all .dist
+
+      - name: read file output
+        run: ls -all .dist/release_nodes
+
       - uses: pCYSl5EDgo/cat@master
         id: release_nodes
         with:
