@@ -155,7 +155,9 @@ jobs:
           prerelease: true
           body: |
             # Milestone Release
-            Release for [${{ github.event.milestone.title }}](${{ github.event.milestone.html_url }})
+
+            Release from Milestone [${{ github.event.milestone.title }}](${{ github.event.milestone.html_url }}).
+
             ---
             ${{ steps.releasenodes.outputs.text }}
 
