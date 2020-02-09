@@ -201,3 +201,36 @@ jobs:
            title: "Release ${{ steps.chart_informations.outputs.CHARTVERSION }}"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+  publish:
+    name: only a test
+    runs-on: ubuntu-latest
+    env:
+      GOARCH: amd64
+      GOOS: linux
+    steps:
+      - name: checkout the the chart Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          repository: 'nolte/helm-charts'
+
+      - uses: actions/download-artifact@v1
+        with:
+          name: "dist"
+          path: '.chartdata'
+
+      - name: copy chart archive
+        run: |
+          mv .chartdata/**.tgz chart-repo/charts/
+
+      - name: Commit files
+        run: |
+          rm -rf .chartdata
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -10,3 +10,7 @@ This is a Test project for Develop a GitHub Workflow based, release and deployme
 * Generate a Release Changelog used [spring-io/github-release-notes-generator](https://github.com/spring-io/github-release-notes-generator) 
 * Use [Issue-Label-Bot](https://github.com/machine-learning-apps/Issue-Label-Bot) for labeling.
 * Use [banyan/auto-label](https://github.com/banyan/auto-label) for adding labels by commited content.
+
+## Helm Specific Feature
+
+* Deploy the Release to [nolte/helm-charts](https://github.com/nolte/helm-charts), a GitHub based [Chart Repository](https://helm.sh/docs/topics/chart_repository/).
