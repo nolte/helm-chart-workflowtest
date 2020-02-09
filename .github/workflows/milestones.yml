@@ -85,9 +85,10 @@ jobs:
       - name: merge pull request fast-forward
         uses: sudo-bot/action-pull-request-merge@v1.0.3
         with:
+            args: "--trace"
             github-token: ${{ secrets.GITHUB_TOKEN }}
             number: ${{ steps.pull_request_release_master.outputs.pullRequestNumber }}
-            merge-method: fast-forward
+            merge-method: rebase
 
       - name: Commit files
         run: |
