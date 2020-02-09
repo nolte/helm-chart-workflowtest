@@ -23,7 +23,7 @@ jobs:
         id: chart_informations
         uses: nolte/github-action/helm/set_facts@feature/shasum
       - uses: actions/github-script@0.4.0
-        if: startWith(github.ref,'feature') != true
+        if: startswith(github.ref,'feature') != true
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -34,7 +34,7 @@ jobs:
               labels: ['enhancement']
             })
       - uses: actions/github-script@0.4.0
-        if: startWith(github.ref,'fix') != true
+        if: startswith(github.ref,'fix') != true
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
