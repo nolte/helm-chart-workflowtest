@@ -34,6 +34,7 @@ jobs:
               repo: context.repo.repo,
               state: "open"
             })
+            console.log(milestones)
             github.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
