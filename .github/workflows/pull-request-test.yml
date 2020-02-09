@@ -22,8 +22,28 @@ jobs:
       - name: read release informations
         id: chart_informations
         uses: nolte/github-action/helm/set_facts@feature/shasum
-
-
+      - uses: actions/github-script@0.4.0
+        if: startsWith(github.head_ref,'feature') == true
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['enhancement']
+            })
+      - uses: actions/github-script@0.4.0
+        if: startsWith(github.head_ref,'fix') == true
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['bug']
+            })
       - uses: actions/github-script@0.4.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
