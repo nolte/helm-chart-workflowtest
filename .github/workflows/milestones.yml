@@ -88,21 +88,79 @@ jobs:
       - name: Run package
         uses: nolte/github-action/helm/build@master
 
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          path: "dist"
+          name: "dist"
+  creatghrelease:
+    name: build release stuff
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          ref: master
+
+      - name: read release informations
+        id: chart_informations
+        uses: nolte/github-action/helm/set_facts@feature/shasum
+
+
+      - uses: actions/download-artifact@v1
+        with:
+          name: dist
+          path: .dist
+
       - name: Echo the greeting's time
-        run: sudo chmod 777 -R ./dist
+        run: sudo chmod 777 -R ./.dist
 
       - name: Run shasum
+        id: checksum_files
         uses: nolte/github-action/utils/sha256sum@feature/shasum
+        with:
+          path: .dist
 
       - name: Create Release Notes
         uses: docker://decathlon/release-notes-generator-action:2.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OUTPUT_FOLDER: dist/release_nodes
-          USE_MILESTONE_TITLE: "true"
-
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v1
+          OUTPUT_FOLDER: .dist/release_nodes
+          USE_MILESTONE_TITLE: "false"
+      - uses: pCYSl5EDgo/cat@master
+        id: release_nodes
         with:
-          path: "dist"
-          name: "dist"      
+          path: .dist/release_nodes/release_file.md
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{steps.chart_informations.outputs.CHARTVERSION }}
+          release_name: Release v${{ steps.chart_informations.outputs.CHARTVERSION }}
+          draft: false
+          prerelease: true
+          body: ${{ steps.release_nodes.outputs.text }}
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.checksum_files.outputs.shaFilePath }}
+          asset_name: sha256sum.txt
+          asset_content_type: text/plain
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./.dist/${{ steps.chart_informations.outputs.CHARTNAME }}-${{ steps.chart_informations.outputs.CHARTVERSION }}.tgz
+          asset_name: ${{ steps.chart_informations.outputs.CHARTNAME }}-${{ steps.chart_informations.outputs.CHARTVERSION }}.tgz
+          asset_content_type: application/x-gzip
