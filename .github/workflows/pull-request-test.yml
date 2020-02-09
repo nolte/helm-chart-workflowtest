@@ -1,0 +1,16 @@
+name: Pull Request Test Flow
+on:
+  pull_request:
+    types: [labeled]
+
+
+jobs:
+  pulllabeld:
+    name: Pull Request Label
+    runs-on: ubuntu-latest
+    env:
+      GOARCH: amd64
+      GOOS: linux
+    steps:
+      - name: debug
+        run: echo "this is a test"
