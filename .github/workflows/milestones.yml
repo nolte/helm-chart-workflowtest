@@ -89,6 +89,7 @@ jobs:
             github-token: ${{ secrets.GITHUB_TOKEN }}
             number: ${{ steps.pull_request_release_master.outputs.pullRequestNumber }}
             merge-method: rebase
+            filter-label: automerge
 
       - name: Commit files
         run: |
