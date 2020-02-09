@@ -184,6 +184,7 @@ jobs:
     name: generate new milestone
     runs-on: ubuntu-latest
     needs: build
+    steps:
       - name: Check out code
         uses: actions/checkout@v2
         with:
