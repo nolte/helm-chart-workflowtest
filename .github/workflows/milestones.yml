@@ -198,6 +198,6 @@ jobs:
       - name: Create Milestone
         uses: "WyriHaximus/github-action-create-milestone@master"
         with:
-           title: "Release ${{ steps.chart_informations.outputs.CHARTVERSION:0:${{#steps.chart_informations.outputs.CHARTVERSION}}-4}}"
+           title: "Release ${{ steps.chart_informations.outputs.CHARTVERSION }}"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
