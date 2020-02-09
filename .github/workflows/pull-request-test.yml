@@ -1,16 +1,35 @@
-name: Pull Request Test Flow
+name: Milestone Management
 on:
   pull_request:
-    types: [labeled]
-
+    types: [closed]
+    branches:
+      - develop
 
 jobs:
   pulllabeld:
-    name: Pull Request Label
+    name: Add Milestone to Pull Request
     runs-on: ubuntu-latest
     env:
       GOARCH: amd64
       GOOS: linux
     steps:
-      - name: debug
-        run: echo "this is a test"
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          ref: develop
+
+      - name: read release informations
+        id: chart_informations
+        uses: nolte/github-action/helm/set_facts@feature/shasum
+
+
+      - uses: actions/github-script@0.4.0
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            octokit.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              context.milestone.number,
+            })
