@@ -29,15 +29,28 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
 
-            const { data: milestones } = await github.issues.listMilestonesForRepo({
+            github.issues.listMilestonesForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: "open"
-            })
-            console.log(milestones)
-            github.issues.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.pull_request.number,
-              milestone: milestones[0].number
-            })
+            }).then({data})=> {
+              // handle data
+              console.log(data)
+              data.forEach(element => { 
+                console.log(element);
+                if(element.title.includes('${{steps.chart_informations.outputs.CHARTVERSION }}')) {
+                  github.issues.update({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: context.pull_request.number,
+                    milestone: element.number
+                  })
+                }
+              }); 
+            });
+
+
+
+            
+
+ 
