@@ -78,7 +78,7 @@ jobs:
           base: master
           title: 'Update master to Latest Release ${{ steps.chart_informations_release.outputs.CHARTVERSION }}'
           mileStoneNumber: "${{ github.event.milestone.number }}"
-          labels: "automatic pr, release"
+          labels: "automerge, release"
           body: >
             This Pull for update the Presentation Master Branch.
 
