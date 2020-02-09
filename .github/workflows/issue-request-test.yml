@@ -1,0 +1,16 @@
+name: Issue Label Test Flow
+on:
+  issues:
+    types: [labeled]
+
+
+jobs:
+  pulllabeld:
+    name: Issue Label
+    runs-on: ubuntu-latest
+    env:
+      GOARCH: amd64
+      GOOS: linux
+    steps:
+      - name: debug
+        run: echo "this is a test from a label"
