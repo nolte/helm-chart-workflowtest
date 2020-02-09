@@ -82,6 +82,13 @@ jobs:
           body: >
             This Pull for update the Presentation Master Branch.
 
+      - name: merge pull request fast-forward
+        uses: sudo-bot/action-pull-request-merge@v1.0.3
+        with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            number: ${{ steps.pull_request_release_master.outputs.pull_request_number }}
+            merge-method: fast-forward
+            
       - name: Commit files
         run: |
           echo "${{ steps.pull_request_release_master.outputs.pull_request_number }}"
