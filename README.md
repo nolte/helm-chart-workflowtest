@@ -1,22 +1,9 @@
 # Helm Chart Test Project 
 
-Git Repo for Develop a ```Development and Release``` Process for Github Based HelmChart. 
+This is a Test project for Develop a GitHub Workflow based, release and deployment process.
 
-```bash
-git commit --allow-empty -m "Trigger notification" && \
-    git push origin feature/simple_builds
-```
+## Features
 
-```
-git commit --allow-empty -m "Trigger notification" && \
-    git push origin develop
-
-## Usage
-
-```bash
-    --version=0.91.0-dev
-```
-
-## Links
-
-* []()
+* Update version in metadata files like readme like (0.91.0-dev).
+* Create a Github Relase and Tag.
+* Mark Develop Versions with a ```x.y.z-dev``` sufix.
