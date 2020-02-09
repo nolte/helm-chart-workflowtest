@@ -136,12 +136,12 @@ jobs:
         run: ls -all .dist/release_nodes
 
       - uses: pCYSl5EDgo/cat@master
-        id: release_nodes
+        id: releasenodes
         with:
           path: .dist/release_nodes/release_file.md
 
       - name: read file output
-        run: echo ${{ steps.release_nodes.outputs.text }}
+        run: echo "${{ steps.releasenodes.outputs.text }}"
 
       - name: Create Release
         id: create_release
@@ -154,7 +154,7 @@ jobs:
           draft: false
           prerelease: true
           body: |
-            ${{ steps.release_nodes.outputs.text }}
+            ${{ steps.releasenodes.outputs.text }}
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1.0.1
