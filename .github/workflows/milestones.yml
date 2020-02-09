@@ -153,7 +153,11 @@ jobs:
           release_name: Release v${{ steps.chart_informations.outputs.CHARTVERSION }}
           draft: false
           prerelease: true
-          body: ${{ steps.releasenodes.outputs.text }}
+          body: |
+            # Milestone Release
+            Release for [${{ github.event.milestone.title }}](${{ github.event.milestone.html_url }})
+            ---
+            ${{ steps.releasenodes.outputs.text }}
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1.0.1
