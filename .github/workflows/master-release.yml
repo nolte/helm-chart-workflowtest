@@ -79,16 +79,16 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-     
+
       - name: Run package
         id: chart_informations
         uses: nolte/github-action/utils/mergeFastForward@feature/shasum
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           baseBranch: master
           headBranch: develop
-     
+
       #- name: merge master release back
       #  run: |
       #    git fetch refs/heads/master
