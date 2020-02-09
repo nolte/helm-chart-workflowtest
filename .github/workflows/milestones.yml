@@ -133,6 +133,8 @@ jobs:
         id: release_nodes
         with:
           path: .dist/release_nodes/release_file.md
+
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1.0.0
@@ -143,7 +145,8 @@ jobs:
           release_name: Release v${{ steps.chart_informations.outputs.CHARTVERSION }}
           draft: false
           prerelease: true
-          body: ${{ steps.release_nodes.outputs.text }}
+          body: |
+            ${{ steps.release_nodes.outputs.text }}
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1.0.1
