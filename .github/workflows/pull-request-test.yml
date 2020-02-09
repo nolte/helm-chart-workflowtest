@@ -28,27 +28,27 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-
             github.issues.listMilestonesForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: "open"
-            }).then({data})=> {
+            }).then(({ data }) => {
               // handle data
               console.log(data)
-              data.forEach(element => { 
+              data.forEach(element => {
                 console.log(element);
-                if(element.title.includes('${{steps.chart_informations.outputs.CHARTVERSION }}')) {
+                if (element.title.includes('${{steps.chart_informations.outputs.CHARTVERSION }}')) {
                   github.issues.update({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     issue_number: context.pull_request.number,
                     milestone: element.number
-                  })
+                  });
                 }
-              }); 
+              });
             });
 
+      
 
 
             
