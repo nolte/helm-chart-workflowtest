@@ -86,12 +86,12 @@ jobs:
         uses: sudo-bot/action-pull-request-merge@v1.0.3
         with:
             github-token: ${{ secrets.GITHUB_TOKEN }}
-            number: ${{ steps.pull_request_release_master.outputs.pull_request_number }}
+            number: ${{ steps.pull_request_release_master.outputs.pullRequestNumber }}
             merge-method: fast-forward
             
       - name: Commit files
         run: |
-          echo "${{ steps.pull_request_release_master.outputs.pull_request_number }}"
+          echo "${{ steps.pull_request_release_master.outputs.pullRequestNumber }}"
       # https://github.com/actions/github-script
       #- uses: actions/github-script@0.4.0
       #  with:
