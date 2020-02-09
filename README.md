@@ -14,7 +14,7 @@ git commit --allow-empty -m "Trigger notification" && \
 ## Usage
 
 ```bash
-    --version=0.81.0
+    --version=0.82.0-dev
 ```
 
 ## Links
