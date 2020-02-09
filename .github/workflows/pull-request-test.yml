@@ -34,7 +34,7 @@ jobs:
               repo: context.repo.repo,
               state: "open"
             })
-            octokit.issues.update({
+            github.issues.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.pull_request.number,
