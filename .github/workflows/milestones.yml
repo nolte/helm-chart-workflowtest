@@ -9,6 +9,9 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          ref: develop
+
       - name: configure git
         run: |
           git config --local user.email "action@github.com"
@@ -37,18 +40,6 @@ jobs:
           git checkout -b release/rc-${{ steps.chart_informations_release.outputs.CHARTVERSION }}
           git checkout develop
 
-      #- name: pull-request
-      #  uses: repo-sync/pull-request@v2
-      #  with:
-      #    source_branch: "release/rc-${{ steps.chart_informations_release.outputs.CHARTVERSION }}"                     # If blank, default: triggered branch
-      #    destination_branch: "master"          # If blank, default: master
-      #    pr_title: "Pulling ${{ github.ref }} into master"
-      #    pr_body: ":crown: *An automated PR*"  # Full markdown support, requires pr_title to be set
-      #    pr_label: "auto-pr"                   # Comma-separated list (no spaces)
-      #    pr_milestone: "${{ github.event.milestone.title }}"           # Milestone name
-      #    github_token: ${{ secrets.GITHUB_TOKEN }}
-
-
       - name: update to next develop version
         uses: nolte/github-action/utils/bump2version@feature/shasum
         with:
@@ -64,11 +55,6 @@ jobs:
           git commit -m "Update to next Develop Version ${{ steps.chart_informations_next_dev.outputs.CHARTVERSION }}" -a
           git push --all origin
 
-
-      - name: debug
-        run: |
-          echo "${{ toJson(github.event) }}"
-
       - name: Initialize Pull Request
         uses: nolte/github-action/utils/pullrequest@feature/shasum
         id: pull_request_release_master
@@ -82,22 +68,41 @@ jobs:
           body: >
             This Pull for update the Presentation Master Branch.
 
-      - name: merge pull request fast-forward
+      - name: accept the pull request
         uses: sudo-bot/action-pull-request-merge@v1.0.3
         with:
             args: "--trace"
             github-token: ${{ secrets.GITHUB_TOKEN }}
             number: ${{ steps.pull_request_release_master.outputs.pullRequestNumber }}
-            #merge-method: rebase
-            #merge-method: fast-forward
             merge-method: merge
             filter-label: automerge
+  release:
+    name: finish the release
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          ref: master
+      - name: Run package
+        uses: nolte/github-action/helm/build@master
 
-      - name: Commit files
-        run: |
-          echo "${{ steps.pull_request_release_master.outputs.pullRequestNumber }}"
-      # https://github.com/actions/github-script
-      #- uses: actions/github-script@0.4.0
-      #  with:
-      #    github-token: ${{secrets.GITHUB_TOKEN}}
-      #    script: |
+      - name: Echo the greeting's time
+        run: sudo chmod 777 -R ./dist
+
+      - name: Run shasum
+        uses: nolte/github-action/utils/sha256sum@feature/shasum
+
+      - name: Create Release Notes
+        uses: docker://decathlon/release-notes-generator-action:2.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OUTPUT_FOLDER: dist
+          USE_MILESTONE_TITLE: "true"
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          path: "dist"
+          name: "dist"      
