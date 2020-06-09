@@ -69,7 +69,7 @@ jobs:
             This Pull for update the Presentation Master Branch.
 
       - name: accept the pull request
-        uses: sudo-bot/action-pull-request-merge@v1.0.3
+        uses: sudo-bot/action-pull-request-merge@@v1.1.1
         with:
             args: "--trace"
             github-token: ${{ secrets.GITHUB_TOKEN }}
